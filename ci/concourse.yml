@@ -1,0 +1,27 @@
+---
+jobs:
+- name: build-resource-image
+  plan:
+  - get: source-code
+    trigger: true
+  - task: build-resource
+    file: source-code/ci/tasks/build-resource.yml
+  - put: docker-hub
+    params:
+      build: build-output
+
+
+resources:
+- name: source-code
+  type: git
+  source:
+    uri: git@github.com:ECSTeam/twitter-resource.git
+    branch: master
+    private_key: {{github-private-key}}
+- name: docker-hub
+  type: docker-image
+  source:
+    repository: ecsteam/twitter-concourse-resource
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
